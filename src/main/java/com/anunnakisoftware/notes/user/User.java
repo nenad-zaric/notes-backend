@@ -19,19 +19,29 @@ public class User implements UserDetails {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "username", nullable = false)
     private String username;
+    @Column(name = "name", nullable = false)
     private String name;
+    @Column(name = "last_name", nullable = false)
     private String lastName;
+    @Column(name = "email", nullable = false)
     private String email;
+    @Column(name = "password", nullable = false)
     private String password;
+    @Column(name = "created", nullable = false)
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate created;
+    @Column(name = "last_edit", nullable = false)
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate lastEdit;
 
+    @Column(name = "enabled")
     private boolean enabled;
+    @Column(name = "locked")
     private boolean locked;
 
+    @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
@@ -46,7 +56,7 @@ public class User implements UserDetails {
         this.password = password;
         this.created = created;
         this.lastEdit = lastEdit;
-        this.enabled = true;
+        this.enabled = false;
         this.locked = false;
         this.role = UserRole.USER;
     }
@@ -59,7 +69,7 @@ public class User implements UserDetails {
         this.password = password;
         this.created = created;
         this.lastEdit = lastEdit;
-        this.enabled = true;
+        this.enabled = false;
         this.locked = false;
         this.role = UserRole.USER;
     }
@@ -73,7 +83,7 @@ public class User implements UserDetails {
         this.password = password;
         this.created = LocalDate.parse(created, dateTimeFormatter);
         this.lastEdit = LocalDate.parse(lastEdit, dateTimeFormatter);
-        this.enabled = true;
+        this.enabled = false;
         this.locked = false;
         this.role = UserRole.USER;
     }
@@ -87,18 +97,15 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    @Column(name = "username", nullable = false)
+
     public String getUsername() {
         return username;
     }
-
-
-
     public void setUsername(String username) {
         this.username = username;
     }
 
-    @Column(name = "email", nullable = false)
+
     public String getEmail() {
         return email;
     }
@@ -107,7 +114,7 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    @Column(name = "name", nullable = false)
+
     public String getName() {
         return name;
     }
@@ -116,7 +123,7 @@ public class User implements UserDetails {
         this.name = name;
     }
 
-    @Column(name = "last_name", nullable = false)
+
     public String getLastName() {
         return lastName;
     }
@@ -125,7 +132,7 @@ public class User implements UserDetails {
     }
 
 
-    @Column(name = "password", nullable = false)
+
     public String getPassword() {
         return password;
     }
@@ -133,7 +140,7 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    @Column(name = "created", nullable = false)
+
     public LocalDate getCreated() {
         return created;
     }
@@ -141,7 +148,7 @@ public class User implements UserDetails {
         this.created = created;
     }
 
-    @Column(name = "last_edit", nullable = false)
+
     public LocalDate getLastEdit() {
         return lastEdit;
     }
@@ -150,7 +157,7 @@ public class User implements UserDetails {
     }
 
 
-    @Column(name = "role")
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.name());
@@ -162,7 +169,7 @@ public class User implements UserDetails {
         return true;
     }
 
-    @Column(name = "locked")
+
     @Override
     public boolean isAccountNonLocked() {
         return !locked;
@@ -173,7 +180,7 @@ public class User implements UserDetails {
         return true;
     }
 
-    @Column(name = "enabled")
+
     @Override
     public boolean isEnabled() {
         return enabled;
