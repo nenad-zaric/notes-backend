@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -45,6 +46,9 @@ public class User implements UserDetails {
         this.password = password;
         this.created = created;
         this.lastEdit = lastEdit;
+        this.enabled = true;
+        this.locked = false;
+        this.role = UserRole.USER;
     }
 
     public User(String username, String email, String name, String lastName, String password, LocalDate created, LocalDate lastEdit) {
@@ -55,7 +59,25 @@ public class User implements UserDetails {
         this.password = password;
         this.created = created;
         this.lastEdit = lastEdit;
+        this.enabled = true;
+        this.locked = false;
+        this.role = UserRole.USER;
     }
+
+    public User(String username, String email, String name, String lastName, String password, String created, String lastEdit) {
+        var dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        this.username = username;
+        this.email = email;
+        this.name = name;
+        this.lastName = lastName;
+        this.password = password;
+        this.created = LocalDate.parse(created, dateTimeFormatter);
+        this.lastEdit = LocalDate.parse(lastEdit, dateTimeFormatter);
+        this.enabled = true;
+        this.locked = false;
+        this.role = UserRole.USER;
+    }
+
 
     public Long getId() {
         return id;

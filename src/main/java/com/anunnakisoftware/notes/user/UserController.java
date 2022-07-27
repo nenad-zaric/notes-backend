@@ -24,11 +24,6 @@ public class UserController {
         return userService.getUsers();
     }
 
-    @PostMapping(path = "registration")
-    public void addNewUser(@RequestBody User user){
-        userService.addNewUser(user);
-    }
-
     @DeleteMapping(path = "{userId}")
     public void deleteUser(@PathVariable("userId") Long id){
         notebookService.deleteNotebookByUserId(id);

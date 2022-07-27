@@ -23,7 +23,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    public void addNewUser(User user) {
+    public String addNewUser(User user) {
         Optional<User> userByEmail = userRepository.findUserByEmail(user.getEmail());
 
         if(userByEmail.isPresent()){
@@ -31,6 +31,7 @@ public class UserService implements UserDetailsService {
         }
 
         userRepository.save(user);
+        return "Registration successful";
     }
 
     public void deleteUser(Long id) {
