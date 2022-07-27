@@ -6,7 +6,10 @@ CREATE TABLE users(
 	email VARCHAR(40) NOT NULL,
 	password CHAR(60) NOT NULL,
     created DATE NOT NULL,
-    last_edit DATE NOT NULL
+    last_edit DATE NOT NULL,
+    enabled BOOL NOT NULL DEFAULT FALSE,
+    locked BOOL NOT NULL DEFAULT FALSE,
+    role VARCHAR(5) NOT NULL DEFAULT 'USER'
 );
 
 
@@ -44,6 +47,16 @@ CREATE TABLE texts(
 CREATE TABLE pictures(
 	path VARCHAR(100) NOT NULL
 ) INHERITS (components);
+
+CREATE TABLE tokens(
+    id SERIAL PRIMARY KEY,
+    user_id SERIAL,
+    token VARCHAR(100) NOT NULL,
+    created TIMESTAMP NOT NULL,
+    expires TIMESTAMP NOT NULL,
+    confirmed TIMESTAMP,
+    CONSTRAINT token_fk FOREIGN KEY(user_id) REFERENCES users(id)
+);
 
 
 --Function that gets called as part of an insert trigger on table user
