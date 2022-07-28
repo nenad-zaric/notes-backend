@@ -1,5 +1,6 @@
 package com.anunnakisoftware.notes.notebook;
 
+import com.anunnakisoftware.notes.note.Note;
 import com.anunnakisoftware.notes.note.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,11 +39,17 @@ public class NotebookService {
         if(numberOfNotebooks == 1){
             throw new IllegalStateException("Can't delete last notebook");
         }
+        noteService.deleteNotesByNotebookId(id);
         repository.deleteById(id);
     }
     public void deleteNotebookByUserId(Long id){
-        noteService.deleteNotesByNotebookId(id);
-        repository.deleteNotebookByUserId(id);
+        List<Notebook> allNotebooksByUser = repository.getNotebooksByUserId(id);
+
+        for (Notebook notebook:allNotebooksByUser) {
+            Long notebookId = notebook.getId();
+            noteService.deleteNotesByNotebookId(notebookId);
+        }
+        repository.deleteNotebooksByUserId(id);
     }
 
     public List<Notebook> getNotebookByUserId(Long userId) {

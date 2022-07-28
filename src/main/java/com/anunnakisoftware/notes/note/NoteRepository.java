@@ -16,4 +16,5 @@ public interface NoteRepository extends JpaRepository<Note,Long> {
     @Modifying
     @Query(value = "DELETE FROM notes WHERE notebook_id = ?1", nativeQuery = true)
     void deleteNotesByNotebookId(Long id);
+
 }

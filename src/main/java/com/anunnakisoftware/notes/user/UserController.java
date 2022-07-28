@@ -11,12 +11,10 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final NotebookService notebookService;
 
     @Autowired
     public UserController(UserService userService, NotebookService notebookService) {
         this.userService = userService;
-        this.notebookService = notebookService;
     }
 
     @GetMapping
@@ -26,7 +24,6 @@ public class UserController {
 
     @DeleteMapping(path = "{userId}")
     public void deleteUser(@PathVariable("userId") Long id){
-        notebookService.deleteNotebookByUserId(id);
         userService.deleteUser(id);
     }
 }

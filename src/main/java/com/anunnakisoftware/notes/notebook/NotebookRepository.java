@@ -15,7 +15,7 @@ public interface NotebookRepository extends JpaRepository<Notebook,Long> {
 
     @Modifying
     @Query(value = "DELETE FROM notebooks WHERE user_id = ?1", nativeQuery = true)
-    void deleteNotebookByUserId(Long userId);
+    void deleteNotebooksByUserId(Long userId);
 
 
     @Query(value = "SELECT COUNT(*) FROM notebooks WHERE user_id = ?1", nativeQuery = true)
@@ -23,4 +23,5 @@ public interface NotebookRepository extends JpaRepository<Notebook,Long> {
 
     @Query(value = "SELECT * FROM notebooks WHERE title = ?1", nativeQuery = true)
     Optional<Notebook> getNotebookByTitle(String title);
+
 }
