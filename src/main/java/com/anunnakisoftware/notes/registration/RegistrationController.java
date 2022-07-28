@@ -1,5 +1,6 @@
 package com.anunnakisoftware.notes.registration;
 
+import com.anunnakisoftware.notes.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,7 +10,7 @@ public class RegistrationController {
     private final RegistrationService registrationService;
 
     @Autowired
-    public RegistrationController(RegistrationService registrationService) {
+    public RegistrationController(RegistrationService registrationService, UserService userService) {
         this.registrationService = registrationService;
     }
 
@@ -22,4 +23,5 @@ public class RegistrationController {
     public String confirm(@RequestParam("token") String token) {
         return registrationService.confirmToken(token);
     }
+
 }
