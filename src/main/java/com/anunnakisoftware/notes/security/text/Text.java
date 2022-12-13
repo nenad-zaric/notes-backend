@@ -1,4 +1,4 @@
-package com.anunnakisoftware.notes.text;
+package com.anunnakisoftware.notes.security.text;
 
 import com.anunnakisoftware.notes.component.Component;
 
