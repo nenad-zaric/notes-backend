@@ -1,7 +1,7 @@
 package com.anunnakisoftware.notes.note;
 
 
-import com.anunnakisoftware.notes.security.text.TextService;
+import com.anunnakisoftware.notes.text.TextService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

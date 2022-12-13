@@ -1,4 +1,4 @@
-package com.anunnakisoftware.notes.security.text;
+package com.anunnakisoftware.notes.text;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

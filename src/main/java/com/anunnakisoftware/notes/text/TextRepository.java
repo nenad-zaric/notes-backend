@@ -1,4 +1,4 @@
-package com.anunnakisoftware.notes.security.text;
+package com.anunnakisoftware.notes.text;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
