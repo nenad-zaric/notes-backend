@@ -37,7 +37,6 @@ CREATE TABLE components(
 	note_id SERIAL,
 
 	CONSTRAINT note_id_fk FOREIGN KEY(note_id) REFERENCES notes(id)
-	CONSTRAINT component_pk PRIMARY KEY(id, note_id)
 );
 
 CREATE TABLE texts(

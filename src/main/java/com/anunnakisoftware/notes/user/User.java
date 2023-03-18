@@ -56,7 +56,7 @@ public class User implements UserDetails {
         this.password = password;
         this.created = created;
         this.lastEdit = lastEdit;
-        this.enabled = false;
+        this.enabled = true;
         this.locked = false;
         this.role = UserRole.USER;
     }
@@ -69,7 +69,7 @@ public class User implements UserDetails {
         this.password = password;
         this.created = created;
         this.lastEdit = lastEdit;
-        this.enabled = false;
+        this.enabled = true;
         this.locked = false;
         this.role = UserRole.USER;
     }
@@ -83,7 +83,7 @@ public class User implements UserDetails {
         this.password = password;
         this.created = LocalDate.parse(created, dateTimeFormatter);
         this.lastEdit = LocalDate.parse(lastEdit, dateTimeFormatter);
-        this.enabled = false;
+        this.enabled = true;
         this.locked = false;
         this.role = UserRole.USER;
     }
