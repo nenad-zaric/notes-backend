@@ -12,11 +12,15 @@ import java.io.IOException;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private JwtService jwtService;
     private String authHeader;
     private String jwt;
-    public JwtAuthenticationFilter(String authHeader, String jwt) {
+    private String userEmail;
+    public JwtAuthenticationFilter(String authHeader, String jwt, String userEmail, JwtService jwtService) {
         this.authHeader = authHeader;
         this.jwt = jwt;
+        this.userEmail = userEmail;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -29,5 +33,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         jwt = authHeader.substring(7);
+        userEmail = jwtService.getUsername(jwt);
     }
 }
