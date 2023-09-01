@@ -10,11 +10,12 @@ import java.util.Optional;
 
 @Transactional
 public interface NoteRepository extends JpaRepository<Note,Long> {
-    @Query(value = "SELECT * FROM notes WHERE notebook_id = ?1", nativeQuery = true)
-    List<Note> getNotesByNotebookId(Long id);
+    @Query(value = "SELECT * FROM notes WHERE user_id = ?1", nativeQuery = true)
+    List<Note> getNotesByUserId(Long id);
 
     @Modifying
-    @Query(value = "DELETE FROM notes WHERE notebook_id = ?1", nativeQuery = true)
-    void deleteNotesByNotebookId(Long id);
+    @Query(value = "DELETE FROM notes WHERE user_id = ?1", nativeQuery = true)
+    void deleteNotesByUserId(Long id);
+
 
 }

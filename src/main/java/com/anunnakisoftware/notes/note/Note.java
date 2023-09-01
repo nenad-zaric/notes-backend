@@ -1,5 +1,6 @@
 package com.anunnakisoftware.notes.note;
 
+import com.anunnakisoftware.notes.user.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
@@ -9,32 +10,29 @@ import java.time.LocalDate;
 @Table(name = "notes")
 public class Note {
     @Id
-    @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long notebookId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
     private String title;
+    private String content;
 
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate created;
+
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate lastEdit;
 
     public Note() {
     }
 
-    public Note(Long id, Long notebookId, String title, LocalDate created, LocalDate lastEdit) {
-        this.id = id;
-        this.notebookId = notebookId;
+    public Note(User user, String title, String content, LocalDate created, LocalDate lastEdit) {
+        this.user = user;
         this.title = title;
-        this.created = created;
-        this.lastEdit = lastEdit;
-    }
-
-    public Note(Long notebookId, String title, LocalDate created, LocalDate lastEdit) {
-        this.notebookId = notebookId;
-        this.title = title;
+        this.content = content;
         this.created = created;
         this.lastEdit = lastEdit;
     }
@@ -47,16 +45,14 @@ public class Note {
         this.id = id;
     }
 
-    @Column(name = "notebook_id")
-    public Long getNotebookId() {
-        return notebookId;
+    public User getUser() {
+        return user;
     }
 
-    public void setNotebookId(Long notebookId) {
-        this.notebookId = notebookId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    @Column(name = "title", nullable = false)
     public String getTitle() {
         return title;
     }
@@ -65,7 +61,14 @@ public class Note {
         this.title = title;
     }
 
-    @Column(name = "created", nullable = false)
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     public LocalDate getCreated() {
         return created;
     }
@@ -74,7 +77,6 @@ public class Note {
         this.created = created;
     }
 
-    @Column(name = "last_edit", nullable = false)
     public LocalDate getLastEdit() {
         return lastEdit;
     }
@@ -87,8 +89,9 @@ public class Note {
     public String toString() {
         return "Note{" +
                 "id=" + id +
-                ", notebookId=" + notebookId +
+                ", user=" + user +
                 ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
                 ", created=" + created +
                 ", lastEdit=" + lastEdit +
                 '}';

@@ -1,6 +1,5 @@
 package com.anunnakisoftware.notes.user;
 
-import com.anunnakisoftware.notes.notebook.NotebookService;
 import com.anunnakisoftware.notes.registration.token.ConfirmationToken;
 import com.anunnakisoftware.notes.registration.token.ConfirmationTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +18,11 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final ConfirmationTokenService confirmationTokenService;
-    private final NotebookService notebookService;
 
     @Autowired
-    public UserService(UserRepository userRepository, ConfirmationTokenService confirmationTokenService, NotebookService notebookService) {
+    public UserService(UserRepository userRepository, ConfirmationTokenService confirmationTokenService) {
         this.userRepository = userRepository;
         this.confirmationTokenService = confirmationTokenService;
-        this.notebookService = notebookService;
     }
 
     public List<User> getUsers(){
@@ -34,6 +31,10 @@ public class UserService implements UserDetailsService {
 
     public Optional<User> getUserById(Long userId){
         return userRepository.findById(userId);
+    }
+
+    public Long getIdByUsername(String username){
+        return userRepository.findIdByUsername(username);
     }
 
     public String addNewUser(User user) {
@@ -58,8 +59,7 @@ public class UserService implements UserDetailsService {
         if(!exists){
             throw new IllegalStateException("User doesn't exist!");
         }
-        confirmationTokenService.deleteTokensByUserId(id);
-        notebookService.deleteNotebookByUserId(id);
+
         userRepository.deleteById(id);
     }
 

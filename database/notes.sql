@@ -1,210 +1,62 @@
-CREATE TABLE users(
-	id SERIAL PRIMARY KEY,
-    username VARCHAR(20) NOT NULL,
-	name VARCHAR(20) NOT NULL,
-    last_name VARCHAR(20) NOT NULL,
-	email VARCHAR(40) NOT NULL,
-	password CHAR(60) NOT NULL,
-    created DATE NOT NULL,
-    last_edit DATE NOT NULL,
-    enabled BOOL NOT NULL DEFAULT TRUE,
-    locked BOOL NOT NULL DEFAULT FALSE,
-    role VARCHAR(5) NOT NULL DEFAULT 'USER'
+CREATE TABLE IF NOT EXISTS public.users
+(
+    id serial PRIMARY KEY,
+    username varchar(20) NOT NULL,
+    name varchar(20) NOT NULL,
+    last_name varchar(20) NOT NULL,
+    email varchar(40) NOT NULL,
+    password char(60) NOT NULL,
+    created date NOT NULL,
+    last_edit date NOT NULL,
+    enabled boolean NOT NULL DEFAULT true,
+    locked boolean NOT NULL DEFAULT false,
+    role varchar(5) NOT NULL DEFAULT 'USER'
 );
 
-
-CREATE TABLE notebooks(
-	id SERIAL PRIMARY KEY,
-    user_id SERIAL,
-	title VARCHAR(20) NOT NULL,
-    color_code VARCHAR(7),
-	
-	CONSTRAINT user_id_fk FOREIGN KEY(user_id) REFERENCES users(id)
+CREATE TABLE IF NOT EXISTS public.notes
+(
+    id serial PRIMARY KEY,
+    user_id integer NOT NULL,
+    title varchar(20) COLLATE pg_catalog."default" NOT NULL,
+    created date NOT NULL,
+    last_edit date NOT NULL,
+    CONSTRAINT user_id_fk FOREIGN KEY (user_id)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
 );
+ALTER TABLE public.notes
+ADD COLUMN content text;
 
-CREATE TABLE notes(
-	id SERIAL PRIMARY KEY,
-	notebook_id SERIAL,
-	title VARCHAR(20) NOT NULL,
-	created DATE NOT NULL,
-    last_edit DATE NOT NULL,
+-- Create a function to insert a default note
+CREATE OR REPLACE FUNCTION insert_default_note()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.notes (user_id, title, content, created, last_edit)
+  VALUES (NEW.id, 'Default Note', '...', NOW(), NOW());
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
-	CONSTRAINT notebook_id_fk FOREIGN KEY(notebook_id)	REFERENCES	notebooks(id)
-);
+-- Create a trigger that fires after a new user is inserted
+CREATE TRIGGER insert_default_note_trigger
+AFTER INSERT
+ON public.users
+FOR EACH ROW
+EXECUTE FUNCTION insert_default_note();
 
-CREATE TABLE components(
-	id SERIAL PRIMARY KEY,
-	note_id SERIAL,
+-- Create a function to delete notes of the deleted user
+CREATE OR REPLACE FUNCTION delete_user_notes()
+RETURNS TRIGGER AS $$
+BEGIN
+  DELETE FROM public.notes WHERE user_id = OLD.id;
+  RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
 
-	CONSTRAINT note_id_fk FOREIGN KEY(note_id) REFERENCES notes(id)
-);
-
-CREATE TABLE texts(
-	content VARCHAR(1000)
-) INHERITS (components);
-
-CREATE TABLE pictures(
-	path VARCHAR(100) NOT NULL
-) INHERITS (components);
-
-CREATE TABLE tokens(
-    id SERIAL PRIMARY KEY,
-    user_id SERIAL,
-    token VARCHAR(100) NOT NULL,
-    created TIMESTAMP NOT NULL,
-    expires TIMESTAMP NOT NULL,
-    confirmed TIMESTAMP,
-    CONSTRAINT token_fk FOREIGN KEY(user_id) REFERENCES users(id)
-);
-
-
---Function that gets called as part of an insert trigger on table user
---Creates default notebook for every new user
-
- CREATE OR REPLACE FUNCTION user_inser_func()
-   RETURNS trigger AS
- $$
- BEGIN
- 	insert into notebooks(user_id, title, color_code)
- 	values(NEW.id, 'Untitled', '#f1c40f');
- RETURN NEW;
- END;
- $$
- LANGUAGE 'plpgsql';
-
---Actual trigger that gets called after inserting new user
- create or replace trigger user_insert
- after insert on users
- for each row
- EXECUTE PROCEDURE user_inser_func();
-
-
---Function that gets called as part of an insert trigger on table notebooks
- CREATE OR REPLACE FUNCTION notebook_insrt_func()
-   RETURNS trigger AS
- $$
- BEGIN
- 	insert into notes(notebook_id, title, created,last_edit)
- 	values(NEW.id, 'Untitled note', CURRENT_DATE, CURRENT_DATE);
- RETURN NEW;
- END;
- $$
- LANGUAGE 'plpgsql';
- --Actual trigger that gets called after inserting new notebook
- create or replace trigger notebook_insrt
- after insert on notebooks
- for each row
- EXECUTE PROCEDURE notebook_insrt_func();
-
-
---Function that gets called as part of an insert trigger on table notes
- CREATE OR REPLACE FUNCTION note_insrt_func()
-   RETURNS trigger AS
- $$
- BEGIN
- 	insert into texts(note_id, content)
- 	values(NEW.id, 'Type here');
- RETURN NEW;
- END;
- $$
- LANGUAGE 'plpgsql';
-
-
- create or replace trigger note_insrt
- after insert on notes
- for each row
- EXECUTE PROCEDURE note_insrt_func();
-
-
- --Delete triggri se ne koriste i bice implementirani u backend-u
- CREATE OR REPLACE FUNCTION user_delete_func()
-   RETURNS trigger AS
- $$
- BEGIN
-
- 	DELETE FROM notebooks
- 	WHERE user_id = id;
- RETURN NEW;
- END;
- $$
- LANGUAGE 'plpgsql';
-
- create or replace trigger user_delete
- before delete on users
- for each row
- EXECUTE PROCEDURE user_delete_func();
-
-
-
- CREATE OR REPLACE FUNCTION notebooks_delete_func()
-   RETURNS trigger AS
- $$
- BEGIN
-
- 	DELETE FROM notes
- 	WHERE notebook_id = id;
- RETURN NEW;
- END;
- $$
- LANGUAGE 'plpgsql';
-
- create or replace trigger notebooks_delete
- before delete on users
- for each row
- EXECUTE PROCEDURE notebooks_delete_func();
-
- CREATE OR REPLACE FUNCTION user_delete_func()
-   RETURNS trigger AS
- $$
- BEGIN
-
- 	DELETE FROM notebooks n
- 	WHERE n.user_id = id;
- RETURN NEW;
- END;
- $$
- LANGUAGE 'plpgsql';
-
- create or replace trigger user_delete
- before delete on users
- for each row
- EXECUTE PROCEDURE user_delete_func();
-
-
- CREATE OR REPLACE FUNCTION notebooks_delete_func()
-   RETURNS trigger AS
- $$
- BEGIN
-
- 	DELETE FROM notes n
- 	WHERE n.notebook_id = id;
- RETURN NEW;
- END;
- $$
- LANGUAGE 'plpgsql';
-
- create or replace trigger notebooks_delete
- before delete on notebooks
- for each row
- EXECUTE PROCEDURE notebooks_delete_func();
-
-
-
- CREATE OR REPLACE FUNCTION note_delete_func()
-   RETURNS trigger AS
- $$
- BEGIN
-
- 	DELETE FROM components c
- 	WHERE c.note_id = id;
- RETURN NEW;
- END;
- $$
- LANGUAGE 'plpgsql';
-
- create or replace trigger note_delete
- before delete on notes
- for each row
- EXECUTE PROCEDURE note_delete_func();
-
-
+-- Create a trigger that fires before a user is deleted
+CREATE TRIGGER delete_user_notes_trigger
+BEFORE DELETE
+ON public.users
+FOR EACH ROW
+EXECUTE FUNCTION delete_user_notes();

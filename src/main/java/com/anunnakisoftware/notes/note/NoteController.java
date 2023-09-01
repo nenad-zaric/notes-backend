@@ -1,9 +1,13 @@
 package com.anunnakisoftware.notes.note;
 
 
-import com.anunnakisoftware.notes.text.TextService;
+import com.anunnakisoftware.notes.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 
@@ -12,22 +16,19 @@ import java.util.List;
 public class NoteController {
 
     private final NoteService noteService;
-    private final TextService textService;
-
     @Autowired
-    public NoteController(NoteService noteService, TextService textService) {
+    public NoteController(NoteService noteService) {
         this.noteService = noteService;
-        this.textService = textService;
+
     }
 
     @GetMapping
     public List<Note> getNotes(){
-        return noteService.getNotes();
-    }
-
-    @GetMapping(path = "{notebookId}")
-    public List<Note> getNotesByNotebookId(@PathVariable Long id){
-        return noteService.getNotesByNotebookId(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(authentication.getPrincipal());
+        String username = (String) authentication.getPrincipal();
+        // You can access userDetails.getUsername() to get the username from the JWT.
+        return noteService.getNotesByUsername(username);
     }
 
     @PostMapping
@@ -37,7 +38,6 @@ public class NoteController {
 
     @DeleteMapping(path = "{noteId}")
     public void deleteNote(Long id){
-        textService.deleteTextsByNoteId(id);
         noteService.deleteNote(id);
     }
 }
